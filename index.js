@@ -88,6 +88,7 @@ function MqttGarageDoorAccessory(log, config) {
 	this.openStatusCmd	= ( config["topics"].openStatusCmd !== undefined ) ? config["topics"].openStatusCmd : "";
 	this.closeStatusCmdTopic= config["topics"].closeStatusCmdTopic;
 	this.closeStatusCmd	= ( config["topics"].closeStatusCmd !== undefined ) ? config["topics"].closeStatusCmd : "";
+	this.jsonTemplate	= config["jsonTemplate"];
 
 	if( this.topicOpenGet != undefined || this.topicClosedGet != undefined ) {
 		this.lwt = config["lwt"];
@@ -149,6 +150,14 @@ function MqttGarageDoorAccessory(log, config) {
 
 	this.client.on('message', function (topic, message) {
 		var status = message.toString();
+
+		// inspired by MrBalonio
+		if (that.jsonTemplate !== undefined){
+                        var jsonStatus = JSON.parse(status);
+			status = json_status[that.jsonTemplate].Switch1;
+			this.log("status : " + status);
+		}
+
 		if( topic == that.lwt ) {
 			if ( message == that.lwt_payload ) {
 				that.log("Gone Offline");
