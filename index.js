@@ -154,7 +154,7 @@ function MqttGarageDoorAccessory(log, config) {
 		// inspired by MrBalonio
 		if (that.jsonTemplate !== undefined){
                         var jsonStatus = JSON.parse(status);
-			status = json_status[that.jsonTemplate].Switch1;
+			status = jsonStatus[that.jsonTemplate].Switch1;
 			this.log("status : " + status);
 		}
 
