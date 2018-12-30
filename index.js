@@ -88,7 +88,7 @@ function MqttGarageDoorAccessory(log, config) {
 	this.openStatusCmd	= ( config["topics"].openStatusCmd !== undefined ) ? config["topics"].openStatusCmd : "";
 	this.closeStatusCmdTopic= config["topics"].closeStatusCmdTopic;
 	this.closeStatusCmd	= ( config["topics"].closeStatusCmd !== undefined ) ? config["topics"].closeStatusCmd : "";
-	this.jsonTemplate	= config["jsonTemplate"];
+	this.jsonInjection	= config["jsonInjection"];
 
 	if( this.topicOpenGet != undefined || this.topicClosedGet != undefined ) {
 		this.lwt = config["lwt"];
@@ -151,11 +151,11 @@ function MqttGarageDoorAccessory(log, config) {
 	this.client.on('message', function (topic, message) {
 		var status = message.toString();
 
-		// inspired by MrBalonio
-		if (that.jsonTemplate !== undefined){
-                        var jsonStatus = JSON.parse(status);
-			status = jsonStatus[that.jsonTemplate].Switch1;
-			that.log("status : " + status);
+		
+		if (that.jsonInjection !== undefined){
+			var parser = Function("status", that.jsonInjection);
+			status = parser(status);
+			that.log("Extracted status from payload: " + status);
 		}
 
 		if( topic == that.lwt ) {
